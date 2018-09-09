@@ -2,4 +2,42 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  z-index: 2;
+}
+html{
+  
+  background-color: slateblue;
+}
+
+.mainFrame{
+  z-index: 2;
+  border-style: none;
+  border-color: black;
+  height: 500px;
+  width: 700px; 
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  overflow: hidden
+}
+.a{
+  z-index: 2;
+  border-color: gray;
+  border-style: solid;
+  border-width: 0.5px;
+  height: 10%;
+  width: 13%;
+  transition: transform 0.2s;
+border-radius: 10%;
+  transform: translate(-50%, -50%);
+position: inherit;
+margin: 0 auto;
+}
+.a:hover{
+  cursor: pointer;
+  transform: scale(2) translate(-25%, -25% );
+}
+.img{
+ position: inherit;
+  z-index: 1;
 }
