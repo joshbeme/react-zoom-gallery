@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from './Header.jpg';
 import Frame from './components/frame'
 import './index.css';
 

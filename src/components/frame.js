@@ -8,13 +8,12 @@ class Frame extends Component {
       nodes: undefined,
       imageW: undefined,
       imageH: undefined,
-      anchorPosittionX: undefined,
-      anchorPosittionY: undefined,
       imgHW: '100%',
       percentX: undefined,
       percentY: undefined,
+      imgX: undefined,
+      imgY: undefined
     };
-    this.generateImgAnchors = this.generateImgAnchors.bind(this);
     this.zoomClick = this.zoomClick.bind(this);
     this.zooming = this.zooming.bind(this);
   }
@@ -25,44 +24,50 @@ class Frame extends Component {
       return setTimeout(resolve, ms);
     });
   }
-//finds center position of image
-  generateImgAnchors = () => {
-    this.setState({
-      anchorH: document.querySelector(".img").offsetHeight / 2,
-      anchorW: document.querySelector(".img").offsetWidth / 2
-    });
-  };
-  
 
   zoomClick(e){
-    e.preventDefault();
+    const tWidth = e.target.offsetWidth;
+    const tHeight = e.target.offsetHeight;
     const targetRect = e.target.getBoundingClientRect();
-    const targeterX = targetRect.x;
-    const targeterY = targetRect.Y;
+    const targeterX = targetRect.x + tWidth;
+    const targeterY = targetRect.y + tHeight;
     const Frame = document.querySelector('.mainFrame');
-    const frameWidth = Frame.offsetWidth
-    const frameHeight = Frame.offsetHeight
+    const frameRect = Frame.getBoundingClientRect();
+    const frameWidth = Frame.offsetWidth;
+    const frameHeight = Frame.offsetHeight;
+    const frameLeft = frameRect.x;
+    const frameRight = frameRect.x + frameWidth;
+    const frameTop = frameRect.y;
+    const frameBot = frameRect.y + frameHeight;
     return new Promise(resolve =>
    { const stuff = this.setState({
-      anchorPosittionX: targeterX,
-      anchorPosittionY: targeterY
+      percentX: (targeterX - frameLeft ) / frameWidth,
+      percentY: (targeterY - frameTop)/frameHeight,
     }); 
     resolve(stuff)
-  }).then(()=> console.log(this.state.anchorPosittionX))
+  }).then(()=> console.log(this.state.percentY))
   }
-  async zooming(){
+  async zooming(e){
+    e.persist(); 
+    await this.zoomClick(e);
+    let imgX = this.state.percentX * 4;
+    let imgY = this.state.percentY * 4;
+
     console.log("zoom")
-    for (let i=0; i<25; i++){
+    for (let i=0; i<=25; i++){
       let stuff = 100
       this.setState({
-        imgHW: `${stuff + (i * 4)}%`
+        imgHW: `${stuff + (i * 4)}%`,
+        imgX: `-${i * imgX}%`,
+        imgY: `-${i * imgY}%`
       });
-      await this.sleep(16)
+      
+      await this.sleep(8);
     }
+   
   }
 
   componentDidMount() {
-    this.generateImgAnchors();
     console.log(document.querySelector('.mainFrame').getBoundingClientRect().x)
   }
   componentWillUnmount() {}
@@ -75,23 +80,38 @@ class Frame extends Component {
       <div className="mainFrame" style={{height: "700px", width:"1000px", backgroundColor: "#000000", left:"15%", top:"15%" }}>
         <a
           className="a"
-          onClick={()=>this.zooming()}
+          onClick={(e)=>this.zooming(e)}
           style={{ top: "50%", left: "50%" }}
         />
         <a
           className="a"
-          onClick={()=>this.zooming()}
+          onClick={(e)=>this.zooming(e)}
           style={{ top: "10%", left: "10%" }}
         />
         <a
           className="a"
-          onClick={()=>this.zooming()}
+          onClick={(e)=>this.zooming(e)}
           style={{ top: "10%", left: "70%" }}
+        />
+                <a
+          className="a"
+          onClick={(e)=>this.zooming(e)}
+          style={{ top: "62%", left: "70%" }}
+        />
+                <a
+          className="a"
+          onClick={(e)=>this.zooming(e)}
+          style={{ top: "75%", left: "30%" }}
+        />
+                        <a
+          className="a"
+          onClick={(e)=>this.zooming(e)}
+          style={{ top: "100%", left: "100%" }}
         />
         <img
           className="img"
           src={this.props.image}
-          style={{ width: heightWidth, height: heightWidth, top: "", left:"" }}
+          style={{ width: heightWidth, height: heightWidth, top: this.state.imgY, left:this.state.imgX }}
         />
       </div>
     );
