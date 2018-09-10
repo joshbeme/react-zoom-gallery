@@ -8,16 +8,18 @@ html{
   
   background-color: slateblue;
 }
+#app{
+  top: 20%;
+  left: 20%;
 
+}
 .mainFrame{
   z-index: 2;
   border-style: none;
   border-color: black;
-  height: 500px;
-  width: 700px; 
+
   position: absolute;
-  top: 20%;
-  left: 20%;
+
   overflow: hidden
 }
 .a{

@@ -9,70 +9,89 @@ class Frame extends Component {
       imageW: undefined,
       imageH: undefined,
       anchorPosittionX: undefined,
-      anchorPosittionY: undefined
+      anchorPosittionY: undefined,
+      imgHW: '100%',
+      percentX: undefined,
+      percentY: undefined,
     };
-    this.generateAnchors = this.generateAnchors.bind(this);
-    this.zoomClick = this.zoomClick.bind(this)
+    this.generateImgAnchors = this.generateImgAnchors.bind(this);
+    this.zoomClick = this.zoomClick.bind(this);
+    this.zooming = this.zooming.bind(this);
   }
 
-  links(props) {}
+// used to timeout with a promise for animations
   sleep(ms) {
     return new Promise(resolve => {
       return setTimeout(resolve, ms);
     });
   }
-
-  generateAnchors = () => {
+//finds center position of image
+  generateImgAnchors = () => {
     this.setState({
-      anchorH: document.querySelector(".img").height / 2,
-      anchorW: document.querySelector(".img").width / 2
+      anchorH: document.querySelector(".img").offsetHeight / 2,
+      anchorW: document.querySelector(".img").offsetWidth / 2
     });
   };
+  
 
   zoomClick(e){
     e.preventDefault();
-    const targeter = e.target.getBoundingClientRect()
+    const targetRect = e.target.getBoundingClientRect();
+    const targeterX = targetRect.x;
+    const targeterY = targetRect.Y;
+    const Frame = document.querySelector('.mainFrame');
+    const frameWidth = Frame.offsetWidth
+    const frameHeight = Frame.offsetHeight
     return new Promise(resolve =>
    { const stuff = this.setState({
-      anchorPosittionX: targeter.x
+      anchorPosittionX: targeterX,
+      anchorPosittionY: targeterY
     }); 
     resolve(stuff)
   }).then(()=> console.log(this.state.anchorPosittionX))
   }
-
+  async zooming(){
+    console.log("zoom")
+    for (let i=0; i<25; i++){
+      let stuff = 100
+      this.setState({
+        imgHW: `${stuff + (i * 4)}%`
+      });
+      await this.sleep(16)
+    }
+  }
 
   componentDidMount() {
-    this.generateAnchors();
+    this.generateImgAnchors();
     console.log(document.querySelector('.mainFrame').getBoundingClientRect().x)
   }
   componentWillUnmount() {}
 
   render(props) {
-    const heightWidth = "100%";
+    const heightWidth = this.state.imgHW;
 
     
     return (
-      <div className="mainFrame" style={{ backgroundColor: "#000000" }}>
+      <div className="mainFrame" style={{height: "700px", width:"1000px", backgroundColor: "#000000", left:"15%", top:"15%" }}>
         <a
           className="a"
-          onClick={e => {this.zoomClick(e)}}
+          onClick={()=>this.zooming()}
           style={{ top: "50%", left: "50%" }}
         />
         <a
           className="a"
-          onClick={e => {this.zoomClick(e)}}
-          style={{ top: "40%", left: "60%" }}
+          onClick={()=>this.zooming()}
+          style={{ top: "10%", left: "10%" }}
         />
         <a
           className="a"
-          onClick={e => { this.zoomClick(e)
-          }}
+          onClick={()=>this.zooming()}
           style={{ top: "10%", left: "70%" }}
         />
         <img
           className="img"
           src={this.props.image}
-          style={{ width: heightWidth, height: heightWidth }}
+          style={{ width: heightWidth, height: heightWidth, top: "", left:"" }}
         />
       </div>
     );
