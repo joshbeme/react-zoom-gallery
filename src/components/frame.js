@@ -14,6 +14,7 @@ class Frame extends Component {
       percentY: undefined,
       imgX: "0",
       imgY: "0",
+      nest: false,
       anchors: [],
       nests: [],
       history: undefined,
@@ -22,6 +23,7 @@ class Frame extends Component {
     this.zoomClick = this.zoomClick.bind(this);
     this.zooming = this.zooming.bind(this);
     this.conditionalRender = this.conditionalRender.bind(this);
+    this.nextImage = this.nextImage.bind(this);
   }
 
   // used to timeout with a promise for animations
@@ -49,32 +51,34 @@ class Frame extends Component {
         percentY: (targeterY - frameTop) / frameHeight
       });
       resolve(stuff);
-    }).then(() => {
-      console.log(this.state.display);
-      this.setState({
-        display: "none",
-        history: {
-          anchors: this.state.anchors,
-          nests: this.state.nests
-        }
-      });
-    }).then(()=>{
-      this.setState({
-        anchors: undefined,
-        nests: undefined
+    })
+      .then(() => {
+        console.log(this.state.display);
+        this.setState({
+          display: "none",
+          history: {
+            anchors: this.state.anchors,
+            nests: this.state.nests
+          }
+        });
       })
-    });
+      .then(() => {
+        this.setState({
+          anchors: undefined,
+          nests: undefined
+        });
+      });
   }
 
   //animates image to the relative position and zooms using sleep for frames
   async zooming(e) {
-    console.log(e);
+    console.log(this.props.imageLinks[e._targetInst.return.key].nest);
     e.persist();
     try {
       await this.zoomClick(e);
       let imgX;
       let imgY;
-      // makes edge cases closer to edge
+      /* makes edge cases closer to edge*/
       if (this.state.percentX <= 0.25) {
         imgX = 0;
       }
@@ -93,8 +97,8 @@ class Frame extends Component {
       if (this.state.percentY > 0.25 && 0.75 > this.state.percentY) {
         imgY = this.state.percentY * 4;
       }
-
-      console.log(e.target.value);
+      /* end edge cases*/
+      console.log(e._targetInst.return.key);
       for (let i = 0; i <= 25; i++) {
         let stuff = 100;
         this.setState({
@@ -105,12 +109,20 @@ class Frame extends Component {
 
         await this.sleep(6);
       }
+      await this.nextImage(e)
     } catch (error) {
       throw error;
     }
   }
+  nextImage(e){
+    return new Promise((resolve)=>{
+this.setState({
+nest: this.props.imageLinks[e._targetInst.return.key].nest
+})
+    })
+  }
 
-  //takes number of nested objects and creates anchors for them
+  //takes number of nested objects and creates anchors per object
   conditionalRender(props) {
     const anchors = [];
     const nests = [];
@@ -128,7 +140,7 @@ class Frame extends Component {
                   key={i}
                 />
               );
-          
+
               nests.push(this.props.imageLinks[i].nest);
             }
           };
@@ -149,7 +161,7 @@ class Frame extends Component {
   componentDidMount(props) {
     // this.conditionalRender()
     this.conditionalRender(props);
-    
+    console.log(this.state.nest.length)
   }
   componentWillUnmount() {}
 
@@ -158,26 +170,28 @@ class Frame extends Component {
   }
   render(props) {
     const heightWidth = this.state.imgHW;
-    
-    return (
-      <div className="mainFrame" style={{ height: "50%", width: "50%" }}>
-        {this.state.anchors}
-        {/* <a
-          className="a"
-          onClick={e => this.zooming(e)}
-          style={{ top: "50%", left: "50%", display: this.state.display }}
-        /> */}
+    let img = (
+      <img
+        className="img"
+        src={this.props.image}
+        style={{
+          width: heightWidth,
+          height: heightWidth,
+          top: this.state.imgY,
+          left: this.state.imgX
+        }}
+      />
+    );
+ if(this.state.nest){
+   img = undefined
+ }
 
-        <img
-          className="img"
-          src={this.props.image}
-          style={{
-            width: heightWidth,
-            height: heightWidth,
-            top: this.state.imgY,
-            left: this.state.imgX
-          }}
-        />
+    return (
+      <div className="mainFrame" style={{ height: "75%", width: "75%" }}>
+        {this.state.anchors}
+        {this.state.nest}
+
+        {img}
       </div>
     );
   }
