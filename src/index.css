@@ -17,7 +17,7 @@ html{
   z-index: 2;
   border-style: none;
   border-color: black;
-
+margin: 0 auto;
   position: absolute;
 
   overflow: hidden
@@ -30,7 +30,7 @@ html{
   height: 10%;
   width: 13%;
   transition: transform 0.1s;
-border-radius: 10%;
+border-radius: 5%;
   transform: translate(-50%, -50%);
 position: inherit;
 margin: 0 auto;
