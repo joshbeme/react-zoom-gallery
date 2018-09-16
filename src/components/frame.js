@@ -109,17 +109,17 @@ class Frame extends Component {
 
         await this.sleep(6);
       }
-      await this.nextImage(e)
+      await this.nextImage(e);
     } catch (error) {
       throw error;
     }
   }
-  nextImage(e){
-    return new Promise((resolve)=>{
-this.setState({
-nest: this.props.imageLinks[e._targetInst.return.key].nest
-})
-    })
+  nextImage(e) {
+    return new Promise(resolve => {
+      this.setState({
+        nest: this.props.imageLinks[e._targetInst.return.key].nest
+      });
+    });
   }
 
   //takes number of nested objects and creates anchors per object
@@ -161,7 +161,7 @@ nest: this.props.imageLinks[e._targetInst.return.key].nest
   componentDidMount(props) {
     // this.conditionalRender()
     this.conditionalRender(props);
-    console.log(this.state.nest.length)
+    console.log(this.state.nest.length);
   }
   componentWillUnmount() {}
 
@@ -182,9 +182,9 @@ nest: this.props.imageLinks[e._targetInst.return.key].nest
         }}
       />
     );
- if(this.state.nest){
-   img = undefined
- }
+    if (this.state.nest) {
+      img = undefined;
+    }
 
     return (
       <div className="mainFrame" style={{ height: "75%", width: "75%" }}>
