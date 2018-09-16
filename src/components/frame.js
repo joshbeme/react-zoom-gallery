@@ -26,7 +26,7 @@ class Frame extends Component {
     this.nextImage = this.nextImage.bind(this);
   }
 
-  // used to timeout with a promise for animations
+  // A promise that times out for await
   sleep(ms) {
     return new Promise(resolve => {
       return setTimeout(resolve, ms);
@@ -128,7 +128,7 @@ class Frame extends Component {
     const nests = [];
     const pusher = props => {
       return new Promise((resolve, props) => {
-        if (nests.length != this.props.imageLinks.length) {
+        if (nests.length !== this.props.imageLinks.length) {
           const loop = () => {
             for (let i = 0; i < this.props.imageLinks.length; i++) {
               anchors.push(
@@ -187,7 +187,7 @@ class Frame extends Component {
     }
 
     return (
-      <div className="mainFrame" style={{ height: "75%", width: "75%" }}>
+      <div className="mainFrame" style={{ height: "100%", width: "100%" }}>
         {this.state.anchors}
         {this.state.nest}
 
