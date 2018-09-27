@@ -1,36 +1,36 @@
 import React, { Component } from "react";
-import logo from "./area1.JPG";
+import logo from "./area1.1.jpg";
 import Frame from "./components/frame";
 import "./index.css";
-import logo1 from "./area2.JPG";
-import option1 from "./option1.JPG";
-import option2 from "./option2.JPG";
+import logo1 from "./area2.1.jpg";
+import option1 from "./option1.1.jpg";
+import option2 from "./option2.1.jpg";
 
 class App extends Component {
   render() {
     const links2 = [
       {
         x: 90,
-        y: 30,
+        y: 45,
         nest: <Frame image={option1} imageLinks={[]} />
       },
       {
-        x: 30,
+        x: 25,
         y: 65,
         nest: <Frame image={option2} imageLinks={[]} />
       }
     ];
     const links = [
       {
-        x: 70,
-        y: 50,
+        x: 73,
+        y: 49,
         nest: <Frame image={logo1} imageLinks={links2} />
       }
     ];
     return (
       <div
         className="app gridcontainer"
-        style={{ height: "75%", width: "75%" }}
+     
       >
         <div className="grid-item1" />
         <div className="grid-item2">

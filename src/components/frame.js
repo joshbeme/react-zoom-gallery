@@ -7,67 +7,45 @@ class Frame extends Component {
     this.state = {
       links: props.imageLinks,
       nodes: undefined,
-      imageW: undefined,
-      imageH: undefined,
-      imgHW: "100%",
       percentX: undefined,
       percentY: undefined,
-      imgX: "0",
-      imgY: "0",
       nest: false,
-      anchors: [],
+      anchor: [],
       nests: [],
       history: undefined,
-      display: "block"
+      display: "block",
+      imgX: "0",
+      imgY: "0",
+      imgHW: "100%"
     };
-    this.zoomClick = this.zoomClick.bind(this);
+    this.savePosition = this.savePosition.bind(this);
     this.zooming = this.zooming.bind(this);
     this.conditionalRender = this.conditionalRender.bind(this);
     this.nextImage = this.nextImage.bind(this);
   }
 
+  anchors = {
+    originX: undefined,
+    originY: undefined,
+    relativeWidth: undefined,
+    relativeHeight: undefined,
+    endX: undefined,
+    endY: undefined
+  };
+  img = {
+    W: undefined,
+    H: undefined,
+    HW: "100%",
+    X: "0",
+    Y: "0",
+    percentX: undefined,
+    percentY: undefined
+  };
   // A promise that times out for await
   sleep(ms) {
     return new Promise(resolve => {
       return setTimeout(resolve, ms);
     });
-  }
-  //finds position of relitive anchor then turns off display of anchors
-  zoomClick(e) {
-    const tWidth = e.target.offsetWidth;
-    const tHeight = e.target.offsetHeight;
-    const targetRect = e.target.getBoundingClientRect();
-    const targeterX = targetRect.x + tWidth;
-    const targeterY = targetRect.y + tHeight;
-    const Frame = document.querySelector(".mainFrame");
-    const frameRect = Frame.getBoundingClientRect();
-    const frameWidth = Frame.offsetWidth;
-    const frameHeight = Frame.offsetHeight;
-    const frameLeft = frameRect.x;
-    const frameTop = frameRect.y;
-    return new Promise(resolve => {
-      const stuff = this.setState({
-        percentX: (targeterX - frameLeft) / frameWidth,
-        percentY: (targeterY - frameTop) / frameHeight
-      });
-      resolve(stuff);
-    })
-      .then(() => {
-        console.log(this.state.display);
-        this.setState({
-          display: "none",
-          history: {
-            anchors: this.state.anchors,
-            nests: this.state.nests
-          }
-        });
-      })
-      .then(() => {
-        this.setState({
-          anchors: undefined,
-          nests: undefined
-        });
-      });
   }
 
   //animates image to the relative position and zooms using sleep for frames
@@ -75,45 +53,103 @@ class Frame extends Component {
     console.log(this.props.imageLinks[e._targetInst.return.key].nest);
     e.persist();
     try {
-      await this.zoomClick(e);
-      let imgX;
-      let imgY;
-      /* makes edge cases closer to edge*/
-      if (this.state.percentX <= 0.25) {
-        imgX = 0;
-      }
-      if (this.state.percentY <= 0.25) {
-        imgY = 0;
-      }
-      if (this.state.percentX >= 0.75) {
-        imgX = 4;
-      }
-      if (this.state.percentY >= 0.75) {
-        imgY = 4;
-      }
-      if (this.state.percentX > 0.25 && 0.75 > this.state.percentX) {
-        imgX = this.state.percentX * 4;
-      }
-      if (this.state.percentY > 0.25 && 0.75 > this.state.percentY) {
-        imgY = this.state.percentY * 4;
-      }
-      /* end edge cases*/
+      await this.savePosition(e);
+      await this.zoomAction();
       console.log(e._targetInst.return.key);
-      for (let i = 0; i <= 25; i++) {
-        let stuff = 100;
-        this.setState({
-          imgHW: `${stuff + i * 4}%`,
-          imgX: `-${i * imgX}%`,
-          imgY: `-${i * imgY}%`
-        });
-
-        await this.sleep(6);
-      }
+      await this.sleep(100);
       await this.nextImage(e);
     } catch (error) {
-      throw error;
+      throw new Error();
     }
   }
+
+  async zoomAction() {
+    let imgX;
+    let imgY;
+    /* makes edge cases look better*/
+    console.log(this.img.percentX, this.img.percentY);
+    if (this.img.percentX <= 0.25) {
+      imgX = 0;
+    }
+    if (this.img.percentY <= 0.25) {
+      imgY = 0;
+    }
+    if (this.img.percentX >= 0.75) {
+      imgX = 4;
+    }
+    if (this.img.percentY >= 0.75) {
+      imgY = 4;
+    }
+    if (this.img.percentX > 0.25 && 0.75 > this.img.percentX) {
+      imgX = this.img.percentX * 4;
+    }
+    if (this.img.percentY > 0.25 && 0.75 > this.img.percentY) {
+      imgY = this.img.percentY * 4;
+    }
+    /* end edge cases*/
+
+    for (let i = 0; i <= 25; i++) {
+      const stuff = 100;
+      // if(i<5){
+      //   this.img.percentY < .51 ? imgY -= .15 : imgY += .15;
+      //   this.img.percentX < .51 ? imgX -= .15 : imgX += .15;
+
+      // }
+      // else if(i<10){
+      //   this.img.percentY < .51 ? imgY -= .05 : imgY += .05;
+      //   this.img.percentX < .51 ? imgX -= .05 : imgX += .05;
+      // }
+
+      this.setState({
+        imgHW: `${stuff + i * 4}%`,
+        imgX: `${-i * imgX}%`,
+        imgY: `${-i * imgY}%`
+      });
+      await this.sleep(16);
+    }
+  }
+
+  //finds position of relitive anchor then turns off display of anchor
+  savePosition(e) {
+    console.log(this.anchors.originX);
+    const tWidth = e.target.offsetWidth;
+    const tHeight = e.target.offsetHeight;
+    const targetRect = e.target.getBoundingClientRect();
+    const targeterX = targetRect.x + tWidth;
+    const targeterY = targetRect.y + tHeight;
+    const frame = document.querySelector(".mainFrame");
+    const frameRect = frame.getBoundingClientRect();
+    const frameObj = {
+      width: frame.offsetWidth,
+      height: frame.offsetHeight,
+      left: frameRect.x,
+      top: frameRect.y
+    };
+    return new Promise(resolve => {
+      const percentCalculator = () => {
+        this.setState({
+          display: "none",
+          history: {
+            anchor: this.state.anchor,
+            nests: this.state.nests
+          }
+        });
+      };
+      resolve(percentCalculator);
+    })
+      .then(() => {
+        console.log(this.state.display);
+        this.img.percentX = (targeterX - frameObj.left) / frameObj.width;
+        this.img.percentY = (targeterY - frameObj.top) / frameObj.height;
+      })
+      .then(() => {
+        this.setState({
+          anchor: undefined,
+          nests: undefined
+        });
+      });
+  }
+
   nextImage(e) {
     return new Promise(resolve => {
       this.setState({
@@ -122,16 +158,28 @@ class Frame extends Component {
     });
   }
 
-  //takes number of nested objects and creates anchors per object
+  //takes number of nested objects and creates anchor per object
   conditionalRender(props) {
-    const anchors = [];
+    const anchor = [];
     const nests = [];
+    const frame = document.querySelector(".mainFrame");
+    const frameRect = frame.getBoundingClientRect();
+    const frameObj = {
+      width: frame.offsetWidth,
+      height: frame.offsetHeight,
+      left: frameRect.x,
+      top: frameRect.y
+    };
+    this.anchors.originX = frameObj.left;
+    this.anchors.originY = frameObj.top;
+    this.anchors.endX = frameObj.left + frameObj.width;
+    this.anchors.endY = frameObj.top + frameObj.height;
     const pusher = props => {
-      return new Promise((resolve, props) => {
+      return new Promise(resolve => {
         if (nests.length !== this.props.imageLinks.length) {
           const loop = () => {
             for (let i = 0; i < this.props.imageLinks.length; i++) {
-              anchors.push(
+              anchor.push(
                 <AnchorNodes
                   x={this.props.imageLinks[i].x}
                   y={this.props.imageLinks[i].y}
@@ -149,10 +197,8 @@ class Frame extends Component {
       });
     };
     pusher(props).then(() => {
-      console.log(anchors);
-      console.log(nests);
       this.setState({
-        anchors: anchors,
+        anchor: anchor,
         nests: nests
       });
     });
@@ -177,8 +223,9 @@ class Frame extends Component {
         style={{
           width: heightWidth,
           height: heightWidth,
+          left: this.state.imgX,
           top: this.state.imgY,
-          left: this.state.imgX
+          //  transform: `translateY(${this.state.imgY})`
         }}
       />
     );
@@ -187,8 +234,8 @@ class Frame extends Component {
     }
 
     return (
-      <div className="mainFrame" style={{ height: "100%", width: "100%" }}>
-        {this.state.anchors}
+      <div className="mainFrame" style={{width: "", height: "500px"}}>
+        {this.state.anchor}
         {this.state.nest}
 
         {img}
