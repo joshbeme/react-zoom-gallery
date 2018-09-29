@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AnchorNodes from "./AnchorNodes";
+import { TiArrowBack } from "react-icons/ti";
 
 class Frame extends Component {
   constructor(props) {
@@ -7,21 +8,22 @@ class Frame extends Component {
     this.state = {
       links: props.imageLinks,
       nodes: undefined,
-      percentX: undefined,
-      percentY: undefined,
-      nest: false,
+      nest: undefined,
       anchor: [],
       nests: [],
       history: undefined,
       display: "block",
       imgX: "0",
       imgY: "0",
-      imgHW: "100%"
+      imgHW: "100%",
+      back: undefined,
     };
     this.savePosition = this.savePosition.bind(this);
     this.zooming = this.zooming.bind(this);
     this.conditionalRender = this.conditionalRender.bind(this);
     this.nextImage = this.nextImage.bind(this);
+    this.back = this.back.bind(this);
+    this.elementHandler = this.elementHandler.bind(this)
   }
 
   anchors = {
@@ -33,11 +35,6 @@ class Frame extends Component {
     endY: undefined
   };
   img = {
-    W: undefined,
-    H: undefined,
-    HW: "100%",
-    X: "0",
-    Y: "0",
     percentX: undefined,
     percentY: undefined
   };
@@ -50,13 +47,10 @@ class Frame extends Component {
 
   //animates image to the relative position and zooms using sleep for frames
   async zooming(e) {
-    console.log(this.props.imageLinks[e._targetInst.return.key].nest);
     e.persist();
     try {
       await this.savePosition(e);
       await this.zoomAction();
-      console.log(e._targetInst.return.key);
-      await this.sleep(100);
       await this.nextImage(e);
     } catch (error) {
       throw new Error();
@@ -67,7 +61,7 @@ class Frame extends Component {
     let imgX;
     let imgY;
     /* makes edge cases look better*/
-    console.log(this.img.percentX, this.img.percentY);
+
     if (this.img.percentX <= 0.25) {
       imgX = 0;
     }
@@ -75,33 +69,24 @@ class Frame extends Component {
       imgY = 0;
     }
     if (this.img.percentX >= 0.75) {
-      imgX = 4;
+      imgX = 8;
     }
     if (this.img.percentY >= 0.75) {
-      imgY = 4;
+      imgY = 8;
     }
     if (this.img.percentX > 0.25 && 0.75 > this.img.percentX) {
-      imgX = this.img.percentX * 4;
+      imgX = this.img.percentX * 8;
     }
     if (this.img.percentY > 0.25 && 0.75 > this.img.percentY) {
-      imgY = this.img.percentY * 4;
+      imgY = this.img.percentY * 8;
     }
     /* end edge cases*/
 
     for (let i = 0; i <= 25; i++) {
       const stuff = 100;
-      // if(i<5){
-      //   this.img.percentY < .51 ? imgY -= .15 : imgY += .15;
-      //   this.img.percentX < .51 ? imgX -= .15 : imgX += .15;
-
-      // }
-      // else if(i<10){
-      //   this.img.percentY < .51 ? imgY -= .05 : imgY += .05;
-      //   this.img.percentX < .51 ? imgX -= .05 : imgX += .05;
-      // }
-
+console.log(this.state.imgHW)
       this.setState({
-        imgHW: `${stuff + i * 4}%`,
+        imgHW: `${stuff + i * 8}%`,
         imgX: `${-i * imgX}%`,
         imgY: `${-i * imgY}%`
       });
@@ -111,7 +96,6 @@ class Frame extends Component {
 
   //finds position of relitive anchor then turns off display of anchor
   savePosition(e) {
-    console.log(this.anchors.originX);
     const tWidth = e.target.offsetWidth;
     const tHeight = e.target.offsetHeight;
     const targetRect = e.target.getBoundingClientRect();
@@ -128,17 +112,15 @@ class Frame extends Component {
     return new Promise(resolve => {
       const percentCalculator = () => {
         this.setState({
-          display: "none",
           history: {
             anchor: this.state.anchor,
             nests: this.state.nests
           }
         });
       };
-      resolve(percentCalculator);
+      resolve(percentCalculator());
     })
       .then(() => {
-        console.log(this.state.display);
         this.img.percentX = (targeterX - frameObj.left) / frameObj.width;
         this.img.percentY = (targeterY - frameObj.top) / frameObj.height;
       })
@@ -151,11 +133,28 @@ class Frame extends Component {
   }
 
   nextImage(e) {
+    const aa = (
+      <a className="back"
+      onClick={this.back}>
+        <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
+      </a>
+    )
     return new Promise(resolve => {
       this.setState({
-        nest: this.props.imageLinks[e._targetInst.return.key].nest
+        nest: this.props.imageLinks[e._targetInst.return.key].nest,
+        back: aa,
       });
     });
+  }
+  
+  back(){
+this.setState({
+  nest: undefined,
+  imgHW: "100%",
+  back: undefined
+});
+setTimeout(
+this.setState(this.state.history), 500)
   }
 
   //takes number of nested objects and creates anchor per object
@@ -183,7 +182,7 @@ class Frame extends Component {
                 <AnchorNodes
                   x={this.props.imageLinks[i].x}
                   y={this.props.imageLinks[i].y}
-                  display={this.display}
+                  // display={this.display}
                   click={e => this.zooming(e)}
                   key={i}
                 />
@@ -204,10 +203,40 @@ class Frame extends Component {
     });
   }
 
+  elementHandler(){
+    const heightWidth = this.state.imgHW;
+    const img = (
+      <img
+        className="img"
+        src={this.props.image}
+        style={{
+          width: heightWidth,
+          height: heightWidth,
+          left: this.state.imgX,
+          top: this.state.imgY
+         
+        }}
+      />
+    );
+    if (this.state.nest !== undefined) {
+      // setTimeout(()=>{
+ this.setState({
+   img: undefined
+ })
+    //}, 500);
+    }
+    else if(this.state.nest == undefined){
+      this.setState({
+        img: img
+      })
+    }
+  }
+
   componentDidMount(props) {
-    // this.conditionalRender()
+  this.elementHandler()
+
     this.conditionalRender(props);
-    console.log(this.state.nest.length);
+ 
   }
   componentWillUnmount() {}
 
@@ -216,28 +245,43 @@ class Frame extends Component {
   }
   render(props) {
     const heightWidth = this.state.imgHW;
-    let img = (
-      <img
-        className="img"
-        src={this.props.image}
-        style={{
-          width: heightWidth,
-          height: heightWidth,
-          left: this.state.imgX,
-          top: this.state.imgY,
-          //  transform: `translateY(${this.state.imgY})`
-        }}
-      />
-    );
-    if (this.state.nest) {
-      img = undefined;
-    }
+    const img = this.state.img ;
+    // if (this.state.nest !== undefined) {
+    //   // setTimeout(()=>{
+    //     img = undefined;
+    //   aa = (
+    //     <a className="back"
+    //     onClick={this.back}>
+    //       <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
+    //     </a>
+    //   )
+    // //}, 500);
+    // }
+    // else if(this.state.nest == undefined){
+    //   aa = null
+    //   img = (
+    //     <img
+    //       className="img"
+    //       src={this.props.image}
+    //       style={{
+    //         width: heightWidth,
+    //         height: heightWidth,
+    //         left: this.state.imgX,
+    //         top: this.state.imgY
+           
+    //       }}
+    //     />
+    //   );
+    // }
 
     return (
-      <div className="mainFrame" style={{width: "", height: "500px"}}>
+      <div className="mainFrame" style={{ width: "100%", height: "100%" }}>
         {this.state.anchor}
+        {this.state.back}
         {this.state.nest}
+      
 
+  
         {img}
       </div>
     );

@@ -32,7 +32,8 @@ class App extends Component {
         className="app gridcontainer"
      
       >
-        <div className="grid-item1" />
+        <div className="grid-item1" >
+        <h1>React Zooming Gallery!</h1></div>
         <div className="grid-item2">
           <Frame className="framing" image={logo} imageLinks={links} />
         </div>

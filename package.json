@@ -5,6 +5,7 @@
   "dependencies": {
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-icons": "^3.1.0",
     "react-scripts": "1.1.5"
   },
   "scripts": {
@@ -12,5 +13,18 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshbeme/react-gallery-zoom.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshbeme/react-gallery-zoom/issues"
+  },
+  "homepage": "https://github.com/joshbeme/react-gallery-zoom#readme",
+  "description": ""
 }

@@ -10,27 +10,45 @@ html{
 }
 
 .mainFrame{
-  z-index: 2;
+ z-index: 2;
   border-style: none;
   border-color: black;
 position: relative;
   overflow: hidden;
-  border-width: 1px;
+  /* border-width: 1px;
   border-color: red;
-  border-style: solid;
+  border-style: solid; */
 
 }
+.back{
+  position: absolute;
+  z-index: 3;
+height: 5%;
+width: 5%;
+-webkit-user-select: none; /* Chrome/Safari */        
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+ */
+
+}
+.arrow{
+  color: #dfe1f0;
+ 
+}
+.back:hover{
+  cursor: pointer;
+}
 .a{
-  z-index: 2;
-  border-color: red;
+  z-index: 1;
+   border-color:#7d7280;
   border-style: solid;
-  border-width: 0.5px;
+  border-width: 0.5px; 
   height: 10%;
   width: 15%;
   transition: transform 0.1s;
 border-radius: 5%;
   transform: translate(-50%, -50%);
 position: absolute;
+box-shadow: 2px 3px 7px;
 }
 .a:hover{
   cursor: pointer;
@@ -39,7 +57,7 @@ position: absolute;
 .img{
 
 position: absolute;
-  z-index: 1;
+
 }
 .framing {
   width: 75%;
@@ -49,25 +67,29 @@ position: absolute;
   display: grid;
   grid-template-columns: 25% 50% 25%;
   grid-template-rows: 25% 50% 30% 25%;
+  background-color: black;
 
 }
 .grid-item1{
+  text-align: center;
+color: white;
   grid-column: 2 / 3;
   grid-row: 1 / 2;
   height: 200px;
   background-color: black
 }
 .grid-item2{
+  display: grid;
   grid-column: 2 /3;
   grid-row: 2 / 3;
   overflow: hidden;
-  
+  height: 600px
 
 }
 .grid-item3{
   grid-column: 2 /3;
   grid-row: 3 / 4;
   height: 200px;
-  background-color: blue
+  background-color: black;
   
 }
