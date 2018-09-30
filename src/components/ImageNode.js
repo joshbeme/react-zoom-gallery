@@ -1,13 +1,20 @@
 import React from "react";
 import ".././index.css";
 
-const AnchorNode = props => {
+const ImageNode = props => {
+    const heightWidth = props.imageHW
   return (
-    <a
-      onClick={props.click}
-      className="a imgLink "
-      style={{ left: `${props.x}%`, top: `${props.y}%` }}
-    />
+    <img
+    className="img"
+    src={props.image}
+    style={{
+      width: heightWidth,
+      height: heightWidth,
+      left: props.imgX,
+      top: props.imgY
+     
+    }}
+  />
   );
 };
-export default AnchorNode;
+export default ImageNode;

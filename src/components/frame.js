@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import AnchorNodes from "./AnchorNodes";
+import ImageNode from "./ImageNode"
 import { TiArrowBack } from "react-icons/ti";
 
 class Frame extends Component {
@@ -23,7 +24,6 @@ class Frame extends Component {
     this.conditionalRender = this.conditionalRender.bind(this);
     this.nextImage = this.nextImage.bind(this);
     this.back = this.back.bind(this);
-    this.elementHandler = this.elementHandler.bind(this)
   }
 
   anchors = {
@@ -144,19 +144,26 @@ console.log(this.state.imgHW)
         nest: this.props.imageLinks[e._targetInst.return.key].nest,
         back: aa,
       });
-    });
+    }).then(console.log(this.state.nest));
   }
   
   back(){
-this.setState({
-  nest: undefined,
-  imgHW: "100%",
-  back: undefined
-});
-setTimeout(
-this.setState(this.state.history), 500)
-  }
+    return new Promise (resolve =>
+resolve(this.setState({
+  imgX: "0",
+  imgY: "0",
+}))).then(()=>{
+  this.setState({
+    nest: undefined,
+    imgHW: "100%",
+    back: undefined,
+  })
 
+this.setState(this.state.history)})
+  }
+forceUpdate(){
+  <ImageNode/>
+}
   //takes number of nested objects and creates anchor per object
   conditionalRender(props) {
     const anchor = [];
@@ -202,38 +209,8 @@ this.setState(this.state.history), 500)
       });
     });
   }
-
-  elementHandler(){
-    const heightWidth = this.state.imgHW;
-    const img = (
-      <img
-        className="img"
-        src={this.props.image}
-        style={{
-          width: heightWidth,
-          height: heightWidth,
-          left: this.state.imgX,
-          top: this.state.imgY
-         
-        }}
-      />
-    );
-    if (this.state.nest !== undefined) {
-      // setTimeout(()=>{
- this.setState({
-   img: undefined
- })
-    //}, 500);
-    }
-    else if(this.state.nest == undefined){
-      this.setState({
-        img: img
-      })
-    }
-  }
-
   componentDidMount(props) {
-  this.elementHandler()
+ // this.elementHandler()
 
     this.conditionalRender(props);
  
@@ -245,37 +222,35 @@ this.setState(this.state.history), 500)
   }
   render(props) {
     const heightWidth = this.state.imgHW;
-    const img = this.state.img ;
-    // if (this.state.nest !== undefined) {
-    //   // setTimeout(()=>{
-    //     img = undefined;
-    //   aa = (
-    //     <a className="back"
-    //     onClick={this.back}>
-    //       <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
-    //     </a>
-    //   )
-    // //}, 500);
-    // }
-    // else if(this.state.nest == undefined){
-    //   aa = null
-    //   img = (
-    //     <img
-    //       className="img"
-    //       src={this.props.image}
-    //       style={{
-    //         width: heightWidth,
-    //         height: heightWidth,
-    //         left: this.state.imgX,
-    //         top: this.state.imgY
-           
-    //       }}
-    //     />
-    //   );
-    // }
+    let img = this.state.img ;
+    if (this.state.nest !== undefined) {
+      // setTimeout(()=>{
+        img = undefined;
+     // aa = (
+     //   <a className="back"
+     //   onClick={this.back}>
+    //      <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
+    //    </a>
+     // )
+    //}, 500);
+    }
+    else if(this.state.nest == undefined){
+      //aa = null
+      img = (
+        <ImageNode
+        image= {this.props.image}
+              imageHW =  {heightWidth}
+              imgX = {this.state.imgX}
+              imgY = {this.state.imgY}
+             
+            
+          />
+      );
+    }
 
     return (
       <div className="mainFrame" style={{ width: "100%", height: "100%" }}>
+      {this.state.toggler}
         {this.state.anchor}
         {this.state.back}
         {this.state.nest}
