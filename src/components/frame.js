@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import AnchorNodes from "./AnchorNodes";
-import ImageNode from "./ImageNode"
+import ImageNode from "./ImageNode";
 import { TiArrowBack } from "react-icons/ti";
 
 class Frame extends Component {
@@ -17,7 +17,7 @@ class Frame extends Component {
       imgX: "0",
       imgY: "0",
       imgHW: "100%",
-      back: undefined,
+      back: undefined
     };
     this.savePosition = this.savePosition.bind(this);
     this.zooming = this.zooming.bind(this);
@@ -53,7 +53,7 @@ class Frame extends Component {
       await this.zoomAction();
       await this.nextImage(e);
     } catch (error) {
-      throw new Error();
+      console.error(error)
     }
   }
 
@@ -84,7 +84,7 @@ class Frame extends Component {
 
     for (let i = 0; i <= 25; i++) {
       const stuff = 100;
-console.log(this.state.imgHW)
+      
       this.setState({
         imgHW: `${stuff + i * 8}%`,
         imgX: `${-i * imgX}%`,
@@ -134,36 +134,41 @@ console.log(this.state.imgHW)
 
   nextImage(e) {
     const aa = (
-      <a className="back"
-      onClick={this.back}>
-        <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
+      <a className="back" onClick={this.back}>
+        <TiArrowBack
+          className="arrow"
+          style={{ width: "100%", height: "100%" }}
+        />
       </a>
-    )
+    );
     return new Promise(resolve => {
       this.setState({
         nest: this.props.imageLinks[e._targetInst.return.key].nest,
-        back: aa,
+        back: aa
       });
-    }).then(console.log(this.state.nest));
+    }).then(e.preventDefault()).then(console.log(this.props.imageLinks[e._targetInst.return.key].nest));
   }
-  
-  back(){
-    return new Promise (resolve =>
-resolve(this.setState({
-  imgX: "0",
-  imgY: "0",
-}))).then(()=>{
-  this.setState({
-    nest: undefined,
-    imgHW: "100%",
-    back: undefined,
-  })
 
-this.setState(this.state.history)})
+  back(e) {
+   
+    return new Promise(resolve =>
+      resolve(
+        this.setState({
+          imgX: "0",
+          imgY: "0"
+        })
+      )
+    )
+      .then(() => {
+        this.setState({
+          nest: undefined,
+          imgHW: "100%",
+          back: undefined
+        });
+      })
+      .then(() => this.setState(this.state.history));
   }
-forceUpdate(){
-  <ImageNode/>
-}
+
   //takes number of nested objects and creates anchor per object
   conditionalRender(props) {
     const anchor = [];
@@ -210,10 +215,9 @@ forceUpdate(){
     });
   }
   componentDidMount(props) {
- // this.elementHandler()
+    // this.elementHandler()
 
     this.conditionalRender(props);
- 
   }
   componentWillUnmount() {}
 
@@ -222,41 +226,29 @@ forceUpdate(){
   }
   render(props) {
     const heightWidth = this.state.imgHW;
-    let img = this.state.img ;
+    let img = this.state.img;
     if (this.state.nest !== undefined) {
-      // setTimeout(()=>{
-        img = undefined;
-     // aa = (
-     //   <a className="back"
-     //   onClick={this.back}>
-    //      <TiArrowBack className="arrow" style={{ width: "100%", height: "100%" }} />
-    //    </a>
-     // )
-    //}, 500);
-    }
-    else if(this.state.nest == undefined){
+      img = undefined;
+    } else if (this.state.nest == undefined) {
       //aa = null
       img = (
         <ImageNode
-        image= {this.props.image}
-              imageHW =  {heightWidth}
-              imgX = {this.state.imgX}
-              imgY = {this.state.imgY}
-             
-            
-          />
+          image={this.props.image}
+          imageHW={heightWidth}
+          imgX={this.state.imgX}
+          imgY={this.state.imgY}
+        />
       );
     }
 
     return (
       <div className="mainFrame" style={{ width: "100%", height: "100%" }}>
-      {this.state.toggler}
-        {this.state.anchor}
+        {this.state.toggler}
         {this.state.back}
-        {this.state.nest}
-      
+        {this.state.anchor}
 
-  
+        {this.state.nest}
+
         {img}
       </div>
     );
