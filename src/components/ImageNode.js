@@ -5,7 +5,7 @@ const ImageNode = props => {
     const heightWidth = props.imageHW
   return (
     <img
-    className="img"
+    className={`img animated ${props.animate} `}
     src={props.image}
     style={{
       width: heightWidth,

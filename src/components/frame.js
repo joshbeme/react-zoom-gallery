@@ -7,7 +7,7 @@ class Frame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      links: props.imageLinks,
+      links: props.children,
       nodes: undefined,
       nest: undefined,
       anchor: [],
@@ -17,7 +17,8 @@ class Frame extends Component {
       imgX: "0",
       imgY: "0",
       imgHW: "100%",
-      back: undefined
+      back: undefined,
+      animate: "fadeIn"
     };
     this.savePosition = this.savePosition.bind(this);
     this.zooming = this.zooming.bind(this);
@@ -127,7 +128,8 @@ class Frame extends Component {
       .then(() => {
         this.setState({
           anchor: undefined,
-          nests: undefined
+          nests: undefined,
+          
         });
       });
   }
@@ -143,10 +145,12 @@ class Frame extends Component {
     );
     return new Promise(resolve => {
       this.setState({
-        nest: this.props.imageLinks[e._targetInst.return.key].nest,
-        back: aa
+        animate: "fadeOut"
       });
-    }).then(e.preventDefault()).then(console.log(this.props.imageLinks[e._targetInst.return.key].nest));
+    }).then(setTimeout(this.setState({
+      nest: this.props.children[e._targetInst.return.key].nest,
+      back: aa
+    }), 100)).then(e.preventDefault());
   }
 
   back(e) {
@@ -163,7 +167,8 @@ class Frame extends Component {
         this.setState({
           nest: undefined,
           imgHW: "100%",
-          back: undefined
+          back: undefined,
+          animate: "fadeIn"
         });
       })
       .then(() => this.setState(this.state.history));
@@ -187,23 +192,26 @@ class Frame extends Component {
     this.anchors.endY = frameObj.top + frameObj.height;
     const pusher = props => {
       return new Promise(resolve => {
-        if (nests.length !== this.props.imageLinks.length) {
+        if (nests.length !== this.props.children.length || nests !== undefined) {
           const loop = () => {
-            for (let i = 0; i < this.props.imageLinks.length; i++) {
+            for (let i = 0; i < this.props.children.length; i++) {
               anchor.push(
                 <AnchorNodes
-                  x={this.props.imageLinks[i].x}
-                  y={this.props.imageLinks[i].y}
+                  x={this.props.children[i].x}
+                  y={this.props.children[i].y}
                   // display={this.display}
                   click={e => this.zooming(e)}
                   key={i}
                 />
               );
 
-              nests.push(this.props.imageLinks[i].nest);
+              nests.push(this.props.children[i].nest);
             }
           };
           resolve(loop());
+        }
+        else{
+          resolve()
         }
       });
     };
@@ -237,6 +245,7 @@ class Frame extends Component {
           imageHW={heightWidth}
           imgX={this.state.imgX}
           imgY={this.state.imgY}
+          animate={this.state.animate}
         />
       );
     }
