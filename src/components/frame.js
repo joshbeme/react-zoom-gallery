@@ -150,7 +150,7 @@ class Frame extends Component {
     }).then(setTimeout(this.setState({
       nest: this.props.children[e._targetInst.return.key].nest,
       back: aa
-    }), 100)).then(e.preventDefault());
+    }), 150)).then(e.preventDefault());
   }
 
   back(e) {
