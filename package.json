@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "animate.css": "^3.7.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-icons": "^3.1.0",
-    "react-scripts": "1.1.5"
+    "react-motion": "^0.5.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -15,7 +16,9 @@
     "eject": "react-scripts eject"
   },
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "react-scripts": "1.1.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/joshbeme/react-gallery-zoom.git"

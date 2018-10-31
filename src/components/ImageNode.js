@@ -1,20 +1,28 @@
-import React from "react";
+import React, {Component} from "react";
 import ".././index.css";
+import 'animate.css'
 
-const ImageNode = props => {
-    const heightWidth = props.imageHW
+class ImageNode extends Component{
+    
+    render(){
+      const heightWidth = this.props.imageHW;
+      const x = this.props.imgX;
+      const y = this.props.imgY;
   return (
     <img
-    className={`img animated ${props.animate} `}
-    src={props.image}
+    className={`img animated ${this.props.animate} `}
+    src={this.props.image}
     style={{
       width: heightWidth,
       height: heightWidth,
-      left: props.imgX,
-      top: props.imgY
+      left: x,
+      top: y,
+      
+      position: "absolute"
      
     }}
+    alt=""
   />
-  );
+  );}
 };
 export default ImageNode;

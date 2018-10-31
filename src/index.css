@@ -9,37 +9,9 @@ html{
   background-color: slateblue;
 }
 
-.mainFrame{
 
-  border-style: none;
-  border-color: black;
-position: relative;
-  overflow: hidden;
-  /* border-width: 1px;
-  border-color: red;
-  border-style: solid; */
 
-}
-.back{
-  position: absolute;
-  z-index: 3;
-height: 5%;
-width: 5%;
--webkit-user-select: none; /* Chrome/Safari */        
--moz-user-select: none; /* Firefox */
--ms-user-select: none; /* IE10+ */
-transition: .5s
-
-}
-.arrow{
-  color: #dfe1f0;
- 
-}
-.back:hover{
-  cursor: pointer;
-  transform: scale(1.25)
-}
-.a{
+/* .a{
   z-index: 1;
    border-color:#7d7280;
   border-style: solid;
@@ -51,23 +23,19 @@ border-radius: 5%;
   transform: translate(-50%, -50%);
 position: absolute;
 box-shadow: 3px 3px 5px;
-}
-.a:hover{
+} */
+/* .a:hover{
   cursor: pointer;
   transform: scale(2) translate(-25%, -25% );
-}
-.img{
+} */
 
-position: absolute;
-
-}
 .framing {
-  width: 75%;
-  height: 75%
+  width: 100%;
+  height: 100%
 }
 .gridcontainer{
   display: grid;
-  grid-template-columns: 25% 50% 25%;
+  grid-template-columns: 20% 60% 20%;
   grid-template-rows: 25% 50% 30% 25%;
   background-color: black;
 

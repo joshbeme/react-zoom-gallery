@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import AnchorNodes from "./AnchorNodes";
+import AnchorNode from "./AnchorNodes";
 import ImageNode from "./ImageNode";
-import { TiArrowBack } from "react-icons/ti";
-
+import 'animate.css';
+import Back from './back'
 class Frame extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      toggle: true,
       links: props.children,
       nodes: undefined,
       nest: undefined,
@@ -25,6 +26,8 @@ class Frame extends Component {
     this.conditionalRender = this.conditionalRender.bind(this);
     this.nextImage = this.nextImage.bind(this);
     this.back = this.back.bind(this);
+    this.handleMouseOn = this.handleMouseOn.bind(this);
+    this.handleMouseOff = this.handleMouseOff.bind(this);
   }
 
   anchors = {
@@ -45,6 +48,20 @@ class Frame extends Component {
       return setTimeout(resolve, ms);
     });
   }
+  handleMouseOn(e) {
+    e.target.style.cursor = "pointer"
+    this.setState({
+      toggle: false
+    });
+    console.log(this.state.toggle)
+  }
+  handleMouseOff() {
+    this.setState({
+      toggle: true
+    })
+    console.log(this.state.toggle)
+  }
+
 
   //animates image to the relative position and zooms using sleep for frames
   async zooming(e) {
@@ -62,7 +79,6 @@ class Frame extends Component {
     let imgX;
     let imgY;
     /* makes edge cases look better*/
-
     if (this.img.percentX <= 0.25) {
       imgX = 0;
     }
@@ -85,11 +101,13 @@ class Frame extends Component {
 
     for (let i = 0; i <= 25; i++) {
       const stuff = 100;
-      
+const x = i * imgX;
+const y = i * imgY;
+
       this.setState({
         imgHW: `${stuff + i * 8}%`,
-        imgX: `${-i * imgX}%`,
-        imgY: `${-i * imgY}%`
+        imgX: `-${x}%`,
+        imgY: `-${y}%`
       });
       await this.sleep(16);
     }
@@ -100,15 +118,15 @@ class Frame extends Component {
     const tWidth = e.target.offsetWidth;
     const tHeight = e.target.offsetHeight;
     const targetRect = e.target.getBoundingClientRect();
-    const targeterX = targetRect.x + tWidth;
-    const targeterY = targetRect.y + tHeight;
+    const targeterX = targetRect.left + tWidth;
+    const targeterY = targetRect.top + tHeight;
     const frame = document.querySelector(".mainFrame");
     const frameRect = frame.getBoundingClientRect();
     const frameObj = {
       width: frame.offsetWidth,
       height: frame.offsetHeight,
-      left: frameRect.x,
-      top: frameRect.y
+      left: frameRect.left,
+      top: frameRect.top
     };
     return new Promise(resolve => {
       const percentCalculator = () => {
@@ -129,32 +147,33 @@ class Frame extends Component {
         this.setState({
           anchor: undefined,
           nests: undefined,
-          
+
         });
       });
   }
 
   nextImage(e) {
+
+
     const aa = (
-      <a className="back" onClick={this.back}>
-        <TiArrowBack
-          className="arrow"
-          style={{ width: "100%", height: "100%" }}
-        />
-      </a>
+     <Back back={this.back}/>
     );
     return new Promise(resolve => {
       this.setState({
         animate: "fadeOut"
       });
-    }).then(setTimeout(this.setState({
-      nest: this.props.children[e._targetInst.return.key].nest,
-      back: aa
-    }), 150)).then(e.preventDefault());
+    }).then(
+      setTimeout(
+
+        this.setState({
+          nest: this.props.children[e._targetInst.return.return.index].nest,
+          back: aa,
+          toggle: true
+        }), 150)).then(e.preventDefault());
   }
 
   back(e) {
-   
+
     return new Promise(resolve =>
       resolve(
         this.setState({
@@ -168,7 +187,8 @@ class Frame extends Component {
           nest: undefined,
           imgHW: "100%",
           back: undefined,
-          animate: "fadeIn"
+          animate: "fadeIn",
+          toggle: true
         });
       })
       .then(() => this.setState(this.state.history));
@@ -196,12 +216,14 @@ class Frame extends Component {
           const loop = () => {
             for (let i = 0; i < this.props.children.length; i++) {
               anchor.push(
-                <AnchorNodes
+                <AnchorNode
+                  key={i}
+                  data-key={i}
                   x={this.props.children[i].x}
                   y={this.props.children[i].y}
                   // display={this.display}
                   click={e => this.zooming(e)}
-                  key={i}
+
                 />
               );
 
@@ -210,7 +232,7 @@ class Frame extends Component {
           };
           resolve(loop());
         }
-        else{
+        else {
           resolve()
         }
       });
@@ -224,10 +246,9 @@ class Frame extends Component {
   }
   componentDidMount(props) {
     // this.elementHandler()
-
     this.conditionalRender(props);
   }
-  componentWillUnmount() {}
+  componentWillUnmount() { }
 
   componentDidCatch(error) {
     console.error(error);
@@ -237,7 +258,7 @@ class Frame extends Component {
     let img = this.state.img;
     if (this.state.nest !== undefined) {
       img = undefined;
-    } else if (this.state.nest == undefined) {
+    } else if (this.state.nest === undefined) {
       //aa = null
       img = (
         <ImageNode
@@ -251,7 +272,12 @@ class Frame extends Component {
     }
 
     return (
-      <div className="mainFrame" style={{ width: "100%", height: "100%" }}>
+      <div className="mainFrame" style={{
+        borderStyle: 'none',
+        borderColor: "black",
+        position: "relative",
+        overflow: "hidden", width: "100%", height: "100%"
+      }}>
         {this.state.toggler}
         {this.state.back}
         {this.state.anchor}
