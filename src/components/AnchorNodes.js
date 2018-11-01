@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import 'animate.css';
 import  {Motion, spring } from 'react-motion';
 
 class AnchorNode extends Component {

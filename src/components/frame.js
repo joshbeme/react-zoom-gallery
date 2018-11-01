@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import AnchorNode from "./AnchorNodes";
 import ImageNode from "./ImageNode";
-import 'animate.css';
 import Back from './back'
 class Frame extends Component {
   constructor(props) {
@@ -30,17 +29,21 @@ class Frame extends Component {
     this.handleMouseOff = this.handleMouseOff.bind(this);
   }
 
-  anchors = {
-    originX: undefined,
-    originY: undefined,
-    relativeWidth: undefined,
-    relativeHeight: undefined,
-    endX: undefined,
-    endY: undefined
+  anchors() {
+    return {
+      originX: undefined,
+      originY: undefined,
+      relativeWidth: undefined,
+      relativeHeight: undefined,
+      endX: undefined,
+      endY: undefined
+    }
   };
-  img = {
+  img () {
+    return{
     percentX: undefined,
-    percentY: undefined
+    percentY: undefined}
+    
   };
   // A promise that times out for await
   sleep(ms) {
@@ -101,8 +104,8 @@ class Frame extends Component {
 
     for (let i = 0; i <= 25; i++) {
       const stuff = 100;
-const x = i * imgX;
-const y = i * imgY;
+      const x = i * imgX;
+      const y = i * imgY;
 
       this.setState({
         imgHW: `${stuff + i * 8}%`,
@@ -156,7 +159,7 @@ const y = i * imgY;
 
 
     const aa = (
-     <Back back={this.back}/>
+      <Back back={this.back} />
     );
     return new Promise(resolve => {
       this.setState({
@@ -203,14 +206,14 @@ const y = i * imgY;
     const frameObj = {
       width: frame.offsetWidth,
       height: frame.offsetHeight,
-      left: frameRect.x,
-      top: frameRect.y
+      left: frameRect.left,
+      top: frameRect.top
     };
     this.anchors.originX = frameObj.left;
     this.anchors.originY = frameObj.top;
     this.anchors.endX = frameObj.left + frameObj.width;
     this.anchors.endY = frameObj.top + frameObj.height;
-    const pusher = props => {
+    const pusher = (props) => {
       return new Promise(resolve => {
         if (nests.length !== this.props.children.length || nests !== undefined) {
           const loop = () => {

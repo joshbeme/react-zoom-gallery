@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-import ".././index.css";
-import 'animate.css'
 
 class ImageNode extends Component{
     
