@@ -82,22 +82,22 @@ class Frame extends Component {
     let imgX;
     let imgY;
     /* makes edge cases look better*/
-    if (this.img.percentX <= 0.25) {
+    if (this.img.percentX <= 0.15) {
       imgX = 0;
     }
-    if (this.img.percentY <= 0.25) {
+    if (this.img.percentY <= 0.15) {
       imgY = 0;
     }
-    if (this.img.percentX >= 0.75) {
+    if (this.img.percentX >= 0.85) {
       imgX = 8;
     }
-    if (this.img.percentY >= 0.75) {
+    if (this.img.percentY >= 0.85) {
       imgY = 8;
     }
-    if (this.img.percentX > 0.25 && 0.75 > this.img.percentX) {
+    if (this.img.percentX > 0.15 && 0.85 > this.img.percentX) {
       imgX = this.img.percentX * 8;
     }
-    if (this.img.percentY > 0.25 && 0.75 > this.img.percentY) {
+    if (this.img.percentY > 0.15 && 0.85 > this.img.percentY) {
       imgY = this.img.percentY * 8;
     }
     /* end edge cases*/
